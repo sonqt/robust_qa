@@ -1,8 +1,3 @@
-"""
-447-448: Change the unanswerable index of start/end 
-Define BERTForSQuADv2
-367: Change model definition
-"""
 #!/usr/bin/env python
 # coding=utf-8
 # Copyright 2020 The HuggingFace Team All rights reserved.
@@ -71,6 +66,12 @@ class ModelArguments:
 
     model_name_or_path: str = field(
         metadata={"help": "Path to pretrained model or model identifier from huggingface.co/models"}
+    )
+    qa_lambda: float = field(
+        default=2.0, metadata={"help": "Lambda/Weight for the Question Answering Loss"}
+    )
+    tagging_lambda: float = field(
+        default=1.0, metadata={"help": "Lambda/Weight for the Sequence Tagging Loss"}
     )
     config_name: Optional[str] = field(
         default=None, metadata={"help": "Pretrained config name or path if not the same as model_name"}
@@ -370,6 +371,8 @@ def main():
     if 'roberta' in model_args.model_name_or_path:
         model = RobertaForSQuADv2.from_pretrained(
             model_args.model_name_or_path,
+            qa_lambda = model_args.qa_lambda,
+            tagging_lambda = model_args.tagging_lambda,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
             config=config,
             cache_dir=model_args.cache_dir,
@@ -380,6 +383,8 @@ def main():
     elif 'albert' in model_args.model_name_or_path:
         model = AlbertForSQuADv2.from_pretrained(
             model_args.model_name_or_path,
+            qa_lambda = model_args.qa_lambda,
+            tagging_lambda = model_args.tagging_lambda,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
             config=config,
             cache_dir=model_args.cache_dir,
@@ -390,6 +395,8 @@ def main():
     elif 'deberta' in model_args.model_name_or_path:
         model = DebertaV2ForSQuADv2.from_pretrained(
             model_args.model_name_or_path,
+            qa_lambda = model_args.qa_lambda,
+            tagging_lambda = model_args.tagging_lambda,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
             config=config,
             cache_dir=model_args.cache_dir,
@@ -400,6 +407,8 @@ def main():
     else:
         model = BertForSQuADv2.from_pretrained(
             model_args.model_name_or_path,
+            qa_lambda = model_args.qa_lambda,
+            tagging_lambda = model_args.tagging_lambda,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
             config=config,
             cache_dir=model_args.cache_dir,

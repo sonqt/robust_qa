@@ -19,10 +19,11 @@ from transformers import (
 
 from transformers.modeling_outputs import QuestionAnsweringModelOutput
 class BertForSQuADv2(BertPreTrainedModel):
-    def __init__(self, config):
+    def __init__(self, config, qa_lambda, tagging_lambda):
         super().__init__(config)
         self.num_labels = config.num_labels
-        # self.num_labels = 3
+        self.qa_lambda = qa_lambda
+        self.tagging_lambda = tagging_lambda
 
         self.bert = BertModel(config, add_pooling_layer=False)
         self.qa_outputs = nn.Linear(config.hidden_size, self.num_labels)
@@ -83,7 +84,7 @@ class BertForSQuADv2(BertPreTrainedModel):
                 start_positions = start_positions.squeeze(-1)
             if len(end_positions.size()) > 1:
                 end_positions = end_positions.squeeze(-1)
-            total_loss = 2 * CrossEntropyLoss_SQuADv2(logits, start_positions, end_positions) + BCELoss_allTokens(logits, start_positions, end_positions)            
+            total_loss = self.qa_lambda*QALossFunction(logits, start_positions, end_positions) + self.tagging_lambda*SequenceTaggingLossFunction(logits, start_positions, end_positions)            
         if not return_dict:
             output = (start_logits, end_logits) + outputs[2:]
             return ((total_loss,) + output) if total_loss is not None else output
@@ -97,9 +98,11 @@ class BertForSQuADv2(BertPreTrainedModel):
         )
 
 class RobertaForSQuADv2(RobertaPreTrainedModel):
-    def __init__(self, config):
+    def __init__(self, config, qa_lambda, tagging_lambda):
         super().__init__(config)
         self.num_labels = config.num_labels
+        self.qa_lambda = qa_lambda
+        self.tagging_lambda = tagging_lambda
 
         self.roberta = RobertaModel(config, add_pooling_layer=False)
         self.qa_outputs = nn.Linear(config.hidden_size, self.num_labels)
@@ -159,7 +162,7 @@ class RobertaForSQuADv2(RobertaPreTrainedModel):
                 start_positions = start_positions.squeeze(-1)
             if len(end_positions.size()) > 1:
                 end_positions = end_positions.squeeze(-1)
-            total_loss = 2 * CrossEntropyLoss_SQuADv2(logits, start_positions, end_positions) + BCELoss_allTokens(logits, start_positions, end_positions)            
+            total_loss = self.qa_lambda*QALossFunction(logits, start_positions, end_positions) + self.tagging_lambda*SequenceTaggingLossFunction(logits, start_positions, end_positions)            
         if not return_dict:
             output = (start_logits, end_logits) + outputs[2:]
             return ((total_loss,) + output) if total_loss is not None else output
@@ -239,7 +242,7 @@ class DebertaV2ForSQuADv2(DebertaV2PreTrainedModel):
             # start_positions = start_positions.clamp(0, ignored_index)
             # end_positions = end_positions.clamp(0, ignored_index)
 
-            total_loss = 2 * CrossEntropyLoss_SQuADv2(logits, start_positions, end_positions) + 300 * BCELoss_allTokens(logits, start_positions, end_positions)
+            total_loss = self.qa_lambda*QALossFunction(logits, start_positions, end_positions) + self.tagging_lambda*SequenceTaggingLossFunction(logits, start_positions, end_positions)            
         if not return_dict:
             output = (start_logits, end_logits) + outputs[1:]
             return ((total_loss,) + output) if total_loss is not None else output
@@ -322,7 +325,7 @@ class AlbertForSQuADv2(AlbertPreTrainedModel):
             # start_positions = start_positions.clamp(0, ignored_index)
             # end_positions = end_positions.clamp(0, ignored_index)
 
-            total_loss = 2 * CrossEntropyLoss_SQuADv2(logits, start_positions, end_positions) + 300 * BCELoss_allTokens(logits, start_positions, end_positions)
+            total_loss = self.qa_lambda*QALossFunction(logits, start_positions, end_positions) + self.tagging_lambda*SequenceTaggingLossFunction(logits, start_positions, end_positions)            
 
         if not return_dict:
             output = (start_logits, end_logits) + outputs[2:]
@@ -339,7 +342,7 @@ class AlbertForSQuADv2(AlbertPreTrainedModel):
 
 
 ############## Loss Functions ##########################
-def CrossEntropyLoss_SQuADv2(logits, start_positions, end_positions):
+def QALossFunction(logits, start_positions, end_positions):
     """
     
     """
@@ -349,29 +352,16 @@ def CrossEntropyLoss_SQuADv2(logits, start_positions, end_positions):
     start_logits = start_logits.squeeze(-1).contiguous()
     end_logits = end_logits.squeeze(-1).contiguous()
 
-    # new_start_positions = torch.ones(start_logits.shape)
-    # for i in range(start_positions.shape[0]):
-    #     start_id = start_positions[i].item()
-    #     if start_logits.shape[1] > start_id >= 0:
-    #         new_start_positions[i][start_id] = 9999
     start_positions = (start_positions*9999 + epsilon).softmax(dim=1).type_as(start_logits)
-
-    # new_end_positions = torch.ones(end_logits.shape)
-    # for i in range(end_positions.shape[0]):
-    #     end_id = end_positions[i].item()
-    #     if end_logits.shape[1] > end_id >= 0:
-    #         new_end_positions[i][end_id] = 9999
     end_positions = (end_positions*9999 + epsilon).softmax(dim=1).type_as(end_logits)
 
-    # start_positions = start_positions.type_as(start_logits)
-    # end_positions = end_positions.type_as(end_logits)
     loss_fct = CrossEntropyLoss(reduction = 'sum')
     start_loss = loss_fct(start_logits, start_positions)
     end_loss = loss_fct(end_logits, end_positions)
     total_loss = (start_loss + end_loss) / 2
     return total_loss
 
-def BCELoss_allTokens(logits, start_positions, end_positions):
+def SequenceTaggingLossFunction(logits, start_positions, end_positions):
     """
     
     """
@@ -379,21 +369,6 @@ def BCELoss_allTokens(logits, start_positions, end_positions):
     start_logits = start_logits.squeeze(-1).contiguous()
     end_logits = end_logits.squeeze(-1).contiguous()
 
-    # cls_starts = torch.zeros(start_logits.shape)
-    # for i in range(start_positions.shape[0]):
-    #     start_id = start_positions[i].item()
-    #     if start_logits.shape[1] > start_id >= 0:
-    #         cls_starts[i][start_id] = 1
-    # cls_starts = cls_starts.type_as(start_logits)
-
-    # cls_ends = torch.zeros(end_logits.shape)
-    # for i in range(end_positions.shape[0]):
-    #     end_id = end_positions[i].item()
-    #     if end_logits.shape[1] > end_id >= 0:
-    #         cls_ends[i][end_id] = 1
-    # cls_ends = cls_ends.type_as(end_logits)
-
-    # pos_weight = torch.full([end_logits.shape[1]], 2).cuda()
     cls_starts = start_positions.type_as(start_logits)
     cls_ends = end_positions.type_as(end_logits)
     pos_weight = torch.tensor([2]).type_as(end_logits)
@@ -404,68 +379,5 @@ def BCELoss_allTokens(logits, start_positions, end_positions):
     end_loss = loss_fct(end_logits, cls_ends)
     total_loss = (start_loss + end_loss) / 2
     return total_loss
+############## Loss Functions ##########################
 
-# def CrossEntropyLoss_allTokens(logits, start_positions, end_positions, num_labels = 3):
-#     """
-    
-#     """
-#     active_logits = logits.view(-1, num_labels)
-#     labels = torch.zeros(logits.shape)
-#     for i in range(labels.shape[0]):
-#         start_id = start_positions[i].item()
-#         end_id = end_positions[i].item()
-#         for id in range(labels.shape[1]):
-#             if id == start_id:
-#                 labels[i][id][1] = 1
-#             if id == end_id:
-#                 labels[i][id][2] = 1
-#             if id != start_id and id != end_id:
-#                 labels[i][id][0] = 1
-#     labels = labels.view(-1, num_labels).softmax(dim=1)
-#     active_logits = active_logits.cuda()
-#     labels = labels.cuda()
-#     class_weights = torch.tensor([1,100,100]).cuda()
-#     loss_fct = CrossEntropyLoss(weight=class_weights)
-#     total_loss = loss_fct(active_logits, labels)
-#     return total_loss
-
-# def BCELoss_bestAnswer(logits, start_positions, end_positions):
-#     _, start_logits, end_logits = logits.split(1, dim=-1)
-#     start_logits = start_logits.squeeze(-1).contiguous()
-#     end_logits = end_logits.squeeze(-1).contiguous()
-
-#     max_start_logits = torch.zeros(start_positions.shape[0])
-#     cls_starts = torch.zeros(start_positions.shape[0])
-#     for i in range(start_positions.shape[0]):
-#         start_id = start_positions[i].item()
-#         if start_logits.shape[1] > start_id >= 0:
-#             cls_starts[i] = 1
-#             max_start_logits[i] = start_logits[i][start_id]
-#         else:
-#             target_id = torch.argmax(start_logits[i]).item()
-#             max_start_logits[i] = start_logits[i][target_id]
-#     cls_starts = cls_starts.cuda()
-#     max_start_logits = max_start_logits.cuda()
-
-#     max_end_logits = torch.zeros(end_positions.shape[0])
-#     cls_ends = torch.zeros(end_positions.shape[0])
-#     for i in range(end_positions.shape[0]):
-#         end_id = end_positions[i].item()
-#         if end_logits.shape[1] > end_id >= 0:
-#             cls_ends[i] = 1
-#             max_end_logits[i] = end_logits[i][end_id]
-#         else:
-#             target_id = torch.argmax(end_logits[i]).item()
-#             max_end_logits[i] = end_logits[i][target_id]
-#     cls_ends = cls_ends.cuda()
-#     max_end_logits = max_end_logits.cuda()
-        
-#     # max_start_logits = torch.max(start_logits, -1).values.cuda()
-#     # max_end_logits = torch.max(end_logits, -1).values.cuda()
-
-#     loss_fct = BCELoss()
-#     sigmoid = nn.Sigmoid()
-#     start_loss = loss_fct(sigmoid(max_start_logits), cls_starts)
-#     end_loss = loss_fct(sigmoid(max_end_logits), cls_ends)
-#     total_loss = (start_loss + end_loss) / 2
-#     return total_loss
