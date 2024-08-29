@@ -32,7 +32,7 @@ from trainer_qa import QuestionAnsweringTrainer
 from utils_qa import postprocess_qa_predictions
 
 import transformers
-from squadv2model import (
+from robust_qa_models import (
     RobustBertForQuestionAnswering, 
     RobustRobertaForQuestionAnswering, 
     RobustDebertaForQuestionAnswering, 
@@ -40,7 +40,6 @@ from squadv2model import (
 )
 from transformers import (
     AutoConfig,
-    AutoModelForQuestionAnswering,
     AutoTokenizer,
     DataCollatorWithPadding,
     EvalPrediction,
