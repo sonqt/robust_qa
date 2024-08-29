@@ -18,7 +18,7 @@ from transformers import (
     AlbertModel)
 
 from transformers.modeling_outputs import QuestionAnsweringModelOutput
-class BertForSQuADv2(BertPreTrainedModel):
+class RobustBertForQuestionAnswering(BertPreTrainedModel):
     def __init__(self, config, qa_lambda, tagging_lambda):
         super().__init__(config)
         self.num_labels = config.num_labels
@@ -97,7 +97,7 @@ class BertForSQuADv2(BertPreTrainedModel):
             attentions=outputs.attentions,
         )
 
-class RobertaForSQuADv2(RobertaPreTrainedModel):
+class RobustRobertaForQuestionAnswering(RobertaPreTrainedModel):
     def __init__(self, config, qa_lambda, tagging_lambda):
         super().__init__(config)
         self.num_labels = config.num_labels
@@ -175,7 +175,7 @@ class RobertaForSQuADv2(RobertaPreTrainedModel):
             attentions=outputs.attentions,
         )
 
-class DebertaV2ForSQuADv2(DebertaV2PreTrainedModel):
+class RobustDebertaForQuestionAnswering(DebertaV2PreTrainedModel):
     def __init__(self, config):
         super().__init__(config)
         self.num_labels = config.num_labels
@@ -255,7 +255,7 @@ class DebertaV2ForSQuADv2(DebertaV2PreTrainedModel):
             attentions=outputs.attentions,
         )
     
-class AlbertForSQuADv2(AlbertPreTrainedModel):
+class RobustAlbertForQuestionAnswering(AlbertPreTrainedModel):
 
     _keys_to_ignore_on_load_unexpected = [r"pooler"]
 
