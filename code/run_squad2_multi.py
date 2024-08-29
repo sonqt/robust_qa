@@ -32,7 +32,12 @@ from trainer_qa import QuestionAnsweringTrainer
 from utils_qa import postprocess_qa_predictions
 
 import transformers
-from squadv2model import BertForSQuADv2, RobertaForSQuADv2, DebertaV2ForSQuADv2, AlbertForSQuADv2
+from squadv2model import (
+    RobustBertForQuestionAnswering, 
+    RobustRobertaForQuestionAnswering, 
+    RobustDebertaForQuestionAnswering, 
+    RobustAlbertForQuestionAnswering,
+)
 from transformers import (
     AutoConfig,
     AutoModelForQuestionAnswering,
@@ -369,7 +374,7 @@ def main():
 
     ###Currently, support only RoBERTa and BERT
     if 'roberta' in model_args.model_name_or_path:
-        model = RobertaForSQuADv2.from_pretrained(
+        model = RobustRobertaForQuestionAnswering.from_pretrained(
             model_args.model_name_or_path,
             qa_lambda = model_args.qa_lambda,
             tagging_lambda = model_args.tagging_lambda,
@@ -381,7 +386,7 @@ def main():
             trust_remote_code=model_args.trust_remote_code,
         )
     elif 'albert' in model_args.model_name_or_path:
-        model = AlbertForSQuADv2.from_pretrained(
+        model = RobustAlbertForQuestionAnswering.from_pretrained(
             model_args.model_name_or_path,
             qa_lambda = model_args.qa_lambda,
             tagging_lambda = model_args.tagging_lambda,
@@ -393,7 +398,7 @@ def main():
             trust_remote_code=model_args.trust_remote_code,
         )
     elif 'deberta' in model_args.model_name_or_path:
-        model = DebertaV2ForSQuADv2.from_pretrained(
+        model = RobustDebertaForQuestionAnswering.from_pretrained(
             model_args.model_name_or_path,
             qa_lambda = model_args.qa_lambda,
             tagging_lambda = model_args.tagging_lambda,
@@ -405,7 +410,7 @@ def main():
             trust_remote_code=model_args.trust_remote_code,
         )
     else:
-        model = BertForSQuADv2.from_pretrained(
+        model = RobustBertForQuestionAnswering.from_pretrained(
             model_args.model_name_or_path,
             qa_lambda = model_args.qa_lambda,
             tagging_lambda = model_args.tagging_lambda,
