@@ -9,7 +9,7 @@ bibtex will available soon
 ```
 ### Fine-tuning BERT on SQuAD1.1/SQuAD 2.0
 
-The [`robust_run_qa.py`](https://github.com/huggingface/transformers/blob/main/examples/pytorch/question-answering/run_qa.py) script allows to fine-tune any model from our [hub](https://huggingface.co/models) (as long as its architecture has a `Robust[Model]ForQuestionAnswering` version in the `robust_qa_models.py` script) on a question-answering dataset (such as SQuAD, or any other QA dataset available in the `datasets` library, or your own csv/jsonlines files) as long as they are structured the same way as SQuAD. You might need to tweak the data processing inside the script if your data is structured differently.
+The [`robust_run_qa.py`](https://github.com/sonqt/robust_qa/blob/main/code/robust_qa_models.py) script allows to fine-tune any model from our [hub](https://huggingface.co/models) (as long as its architecture has a `Robust[Model]ForQuestionAnswering` version in the `robust_qa_models.py` script) on a question-answering dataset (such as SQuAD, or any other QA dataset available in the `datasets` library, or your own csv/jsonlines files) as long as they are structured the same way as SQuAD. You might need to tweak the data processing inside the script if your data is structured differently.
 
 Our implementation currently supports BERT, RoBERTa, and SpanBERT. If you require support for additional models, please open an issue.
 
