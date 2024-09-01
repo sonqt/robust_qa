@@ -2,7 +2,7 @@
 This is an official implementation for our paper, [Towards Robust Extractive Question Answering Models: Rethinking the Training Methodology
 ](https://openreview.net/forum?id=LlUCoqtgpd), 2024. 
 
-**Acknowledgement**: Our implementation and this README primarily builds upon the [`run_qa.py`](https://github.com/huggingface/transformers/blob/main/examples/pytorch/question-answering/run_qa.py) script provided by HuggingFace. 
+**Acknowledgement**: Our implementation and this README primarily build upon the [`run_qa.py`](https://github.com/huggingface/transformers/blob/main/examples/pytorch/question-answering/run_qa.py) script provided by HuggingFace. 
 
 ```bibtex
 bibtex will available soon
