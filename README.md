@@ -1,5 +1,8 @@
 <h1 align='center' style="text-align:center; font-weight:bold; font-size:2.0em;letter-spacing:2.0px;"> Towards Robust Extractive Question Answering Models: Rethinking the Training Methodology </h1>
-
+<p align='center' style="text-align:center;font-size:1.25em;">
+    <a href="https://sonqt.github.io" target="_blank" style="text-decoration: none;">Son Quoc Tran<sup>1,*</sup></a>&nbsp;,&nbsp;
+    <a href="[https://cs.stanford.edu/~diyiy/](http://personal.denison.edu/~kretchmar/)" target="_blank" style="text-decoration: none;">Matt Kretchmar<sup>4</sup></a>&nbsp;,&nbsp;
+    <br/> 
 This is an official implementation for our paper, [Towards Robust Extractive Question Answering Models: Rethinking the Training Methodology
 ](https://openreview.net/forum?id=LlUCoqtgpd), 2024. 
 
