@@ -1,4 +1,4 @@
-<h1 align='center' style="text-align:center; font-weight:bold; font-size:2.0em;letter-spacing:2.0px;"> How Johnny Can Persuade LLMs to Jailbreak Them: Rethinking Persuasion to Challenge AI Safety by Humanizing LLMs </h1>
+<h1 align='center' style="text-align:center; font-weight:bold; font-size:2.0em;letter-spacing:2.0px;"> Towards Robust Extractive Question Answering Models: Rethinking the Training Methodology </h1>
 
 This is an official implementation for our paper, [Towards Robust Extractive Question Answering Models: Rethinking the Training Methodology
 ](https://openreview.net/forum?id=LlUCoqtgpd), 2024. 
