@@ -12,7 +12,23 @@ This is an official implementation for our paper, [Towards Robust Extractive Que
 **Acknowledgement**: Our implementation and this README primarily build upon the [`run_qa.py`](https://github.com/huggingface/transformers/blob/main/examples/pytorch/question-answering/run_qa.py) script provided by HuggingFace. 
 
 ```bibtex
-bibtex will available soon
+@inproceedings{tran-kretchmar-2024-towards,
+    title = "Towards Robust Extractive Question Answering Models: Rethinking the Training Methodology",
+    author = "Tran, Son  and
+      Kretchmar, Matt",
+    editor = "Al-Onaizan, Yaser  and
+      Bansal, Mohit  and
+      Chen, Yun-Nung",
+    booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2024",
+    month = nov,
+    year = "2024",
+    address = "Miami, Florida, USA",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2024.findings-emnlp.121",
+    pages = "2222--2236",
+    abstract = "This paper proposes a novel training method to improve the robustness of Extractive Question Answering (EQA) models. Previous research has shown that existing models, when trained on EQA datasets that include unanswerable questions, demonstrate a significant lack of robustness against distribution shifts and adversarial attacks. Despite this, the inclusion of unanswerable questions in EQA training datasets is essential for ensuring real-world reliability. Our proposed training method includes a novel loss function for the EQA problem and challenges an implicit assumption present in numerous EQA datasets. Models trained with our method maintain in-domain performance while achieving a notable improvement on out-of-domain datasets. This results in an overall F1 score improvement of 5.7 across all testing sets. Furthermore, our models exhibit significantly enhanced robustness against two types of adversarial attacks, with a performance decrease of only about one-third compared to the default models.",
+}
+
 ```
 ### Fine-tuning BERT on SQuAD1.1/SQuAD 2.0
 
