@@ -37,7 +37,7 @@ The [`robust_run_qa.py`](https://github.com/sonqt/robust_qa/blob/main/code/robus
 Our implementation currently supports BERT, RoBERTa, and SpanBERT. If you require support for additional models, please open an issue.
 
 ```bash
-run_qa="code/run_squad2_multi.py"
+run_qa="code/robust_run_qa.py"
 save_path="PATH-TO-SAVE-MODEL-AND-RESULTS"
 train_path="NAME/PATH-OF-TRAIN-DATA"
 validation_path="NAME/PATH-OF-VALIDATION-DATA"
